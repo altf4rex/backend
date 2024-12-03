@@ -1,16 +1,24 @@
-import mongoose from 'mongoose';  // Import the Mongoose library to interact with MongoDB
-import dotenv from 'dotenv';      // Import dotenv to work with environment variables
+import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-dotenv.config();                  // Load environment variables from the .env file
+dotenv.config();
 
-const connectDB = async () => {    // Function to connect to the database
-    try {
-        await mongoose.connect(process.env.MONGO_URI!); // Connect to MongoDB using the connection string
-        console.log('MongoDB connected successfully!');
-    } catch (error) {
-        console.error('Error connecting to MongoDB:', error);
-        process.exit(1);           // Terminate the process if connection fails
+class Database {
+  private static instance: mongoose.Connection | null = null;
+
+  static async getInstance(): Promise<mongoose.Connection> {
+    if (!this.instance) {
+      try {
+        const connection = await mongoose.connect(process.env.MONGO_URI!);
+        this.instance = connection.connection;
+        console.log("MongoDB connected using Singleton Pattern");
+      } catch (error) {
+        console.error("Error connecting to MongoDB:", error);
+        process.exit(1); // Завершаем процесс при ошибке
+      }
     }
-};
+    return this.instance;
+  }
+}
 
-export default connectDB;          // Export the function for use in other files
+export default Database;

@@ -1,22 +1,26 @@
-import express from 'express';       // Import the Express framework to create the server
-import connectDB from './database/db'; // Import the database connection function
+import express from "express";
+import dotenv from "dotenv";
+import Database from "./database/db"; 
+import pageRoutes from "./routes/pageRoutes";
+import errorHandler from "./middlewares/errorHandler";
 
-const app = express();               // Create an Express app
-const port = process.env.PORT || 3000; // Set the port where the server will run
+dotenv.config();
 
-// Connect to the database
-connectDB(); // Call the database connection function (from db.ts)
+const app = express();
+const port = process.env.PORT || 3000;
 
-// Middleware to handle JSON (allows the server to understand JSON data)
 app.use(express.json());
+app.use("/api", pageRoutes);
+app.use(errorHandler);
 
-// Define a simple route: when accessing the root of the server '/', it will return a message
-app.get('/', (req, res) => {
-  res.send('API is working!');
-});
-
-// Start the server on the specified port
-app.listen(port, () => {
-  console.log(`Server is running at http://localhost:${port}`);
-});
+(async () => {
+  try {
+    await Database.getInstance();
+    app.listen(port, () => {
+      console.log(`Server is running at http://localhost:${port}`);
+    });
+  } catch (err) {
+    console.error("Failed to start server:", err);
+  }
+})(); 
 

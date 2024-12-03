@@ -1,45 +1,30 @@
-// Имитируют структуру данных и их создание.
+import mongoose, { Schema, Document } from "mongoose";
 
-
-
-export class Page {
-    id: string;
+// Interface extending the default Mongoose Document with custom methods
+export interface IPage extends Document {
     title: string;
     content: string;
     createdAt: Date;
     updatedAt: Date | null;
 
-    constructor(id: string, title: string, content: string){
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.createdAt = new Date();
-        this.updatedAt = null;
-    }
-
-    //логика, связанная с объектом, была инкапсулирована в его классе.
-
-    updated(title: string, content: string): void {
-        this.title = title;
-        this.content = content;
-        this.updatedAt = new Date();
-    }
-
-    toJSON(): Record<string, unknown>{
-        return {
-            id: this.id,
-            title: this.title,
-            content: this.content,
-            createdAt: this.createdAt,
-        }
-    }
-
-    validate(): boolean {
-        if(!this.title || !this.content){
-            throw new Error("Title and content are required")
-        }
-
-        return true
-    }
-
+    // Custom method for validation
+    validatePage: () => void;
 }
+
+const PageSchema = new Schema<IPage>({
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now },
+    updatedAt: { type: Date, default: null },
+});
+
+// Custom validation method added to the schema
+PageSchema.methods.validatePage = function () {
+    if (!this.title || !this.content) {
+        throw new Error("Title and content are required");
+    }
+};
+
+export default mongoose.model<IPage>("Page", PageSchema);
+
+

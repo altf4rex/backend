@@ -1,43 +1,79 @@
-//Бизнес-логика обработки страниц
+import { Request, Response } from "express";
+import Page from "../models/Page";
 
-import { generateId } from "../../utils/helpers";
-import { Page } from "../models/Page";
-
-export class PageController {
-    private static pages: Page[] = [];
-
-    static create(title: string, content: string):Page {
-        const page = new Page(generateId(), title, content);
-        page.validate();
-        this.pages.push(page);
-        return page;
+export const PageController = {
+  // Получение всех страниц
+  async getAll(req: Request, res: Response) {
+    try {
+      const pages = await Page.find({}, { title: 1, _id: 1 });
+      res.json(pages); // Отправляем ответ и ничего не возвращаем
+    } catch (error) {
+      res.status(500).json({ message: "An error occurred while fetching pages" });
     }
+  },
 
-    static createDefault(): Page {
-        const defaultTitle = "Page name";
-        const defaultContent = "text";
-        return this.create(defaultTitle, defaultContent);
+  // Получение страницы по ID
+  async getById(req: Request, res: Response) {
+    try {
+      const page = await Page.findById(req.params.id);
+      if (!page) {
+        res.status(404).send("Page not found");
+        return; // Завершаем выполнение функции
+      }
+      res.json(page); // Отправляем ответ
+    } catch (error) {
+      res.status(500).json({ message: "An error occurred while fetching the page" });
     }
+  },
 
-    static getAll(): Pick<Page, "id" | "title">[]{
-        return this.pages.map(({id, title}) => ({id, title}))
+  // Создание новой страницы
+  async create(req: Request, res: Response) {
+    try {
+      const { title, content } = req.body;
+      const newPage = new Page({ title, content });
+      newPage.validatePage(); // Валидация данных
+      await newPage.save(); // Сохраняем в БД
+      res.status(201).json(newPage); // Отправляем ответ
+    } catch (error) {
+      res.status(400).json({ message: "Error creating page" });
     }
+  },
 
-    static getById(id: string): Page | null {
-        return this.pages.find(p => p.id === id) || null
-    }
+  // Обновление страницы по ID
+  async update(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const { title, content } = req.body;
 
-    static update(id: string, title: string, content: string): Page | null {
-        const page = this.pages.find(p => p.id === id) || null;
-        if(!page) return null;
-        page.updated(title, content)
-        return page
-    }
+      const updatedPage = await Page.findByIdAndUpdate(
+        id,
+        { title, content, updatedAt: new Date() },
+        { new: true }
+      );
 
-    static delete(id: string): boolean {
-        const index = this.pages.findIndex(p => p.id === id);
-        if (index === -1) return false;
-        this.pages.splice(index, 1); 
-        return true;
+      if (!updatedPage) {
+        res.status(404).send("Page not found");
+        return;
+      }
+      res.json(updatedPage);
+    } catch (error) {
+      res.status(500).json({ message: "Error updating page" });
     }
-}
+  },
+
+  // Удаление страницы по ID
+  async delete(req: Request, res: Response) {
+    try {
+      const { id } = req.params;
+      const result = await Page.findByIdAndDelete(id);
+      if (!result) {
+        res.status(404).send("Page not found");
+        return;
+      }
+      res.status(204).send(); // Успешное удаление
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting page" });
+    }
+  },
+};
+
