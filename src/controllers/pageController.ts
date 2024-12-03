@@ -30,10 +30,9 @@ export const PageController = {
   async create(req: Request, res: Response) {
     try {
       const { title, content } = req.body;
-      const newPage = new Page({ title, content });
-      newPage.validatePage(); // Валидация данных
+      const newPage = Page.createPage(title, content); // Используем фабрику
       await newPage.save(); // Сохраняем в БД
-      res.status(201).json(newPage); // Отправляем ответ
+      res.status(201).json(newPage); // Ответ клиенту
     } catch (error) {
       res.status(400).json({ message: "Error creating page" });
     }
