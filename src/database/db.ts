@@ -11,7 +11,7 @@ class Database {
       try {
         const connection = await mongoose.connect(process.env.MONGO_URI!);
         this.instance = connection.connection;
-        console.log("MongoDB connected using Singleton Pattern");
+        console.log("Ok");
       } catch (error) {
         console.error("Error connecting to MongoDB:", error);
         process.exit(1); // Завершаем процесс при ошибке

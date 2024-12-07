@@ -5,7 +5,8 @@ export const PageController = {
   // Получение всех страниц
   async getAll(req: Request, res: Response) {
     try {
-      const pages = await Page.find({}, { title: 1, _id: 1 });
+      // const pages = await Page.find({}, { title: 1, _id: 1 });
+      const pages = await Page.find();
       res.json(pages); // Отправляем ответ и ничего не возвращаем
     } catch (error) {
       res.status(500).json({ message: "An error occurred while fetching pages" });
