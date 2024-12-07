@@ -9,7 +9,7 @@
     "forceConsistentCasingInFileNames": true, // Проверка регистра файлов
     "skipLibCheck": true
   },
-  "include": ["src/**/*", "seed.ts"],              // Файлы, которые TypeScript будет компилировать
+  "include": ["src/**/*", "src/seed.ts"],              // Файлы, которые TypeScript будет компилировать
   "exclude": ["node_modules"]           // Исключаем папку node_modules
 }
 
