@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
-    "target": "ES2020",                 // Версия JavaScript, в которую будет компилироваться TypeScript
-    "module": "commonjs",               // Модульная система для Node.js
-    "rootDir": "./src",                 // Исходные файлы
-    "outDir": "./src/dist",                 // Скомпилированные файлы
-    "strict": true,                     // Включает строгую типизацию
-    "esModuleInterop": true,            // Поддержка модулей ES6
-    "forceConsistentCasingInFileNames": true, // Проверка регистра файлов
-    "skipLibCheck": true
+    "outDir": "./dist",  // Здесь указываем, куда будут компилироваться файлы
+    "rootDir": "./src",  // Исходные файлы находятся в папке src
+    "strict": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "module": "commonjs",
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*", "src/seed.ts"],              // Файлы, которые TypeScript будет компилировать
-  "exclude": ["node_modules"]           // Исключаем папку node_modules
+  "include": ["src/**/*"],  // Компилируются все файлы в src
+  "exclude": ["node_modules"]  // Исключаем папку node_modules
 }
+
 
