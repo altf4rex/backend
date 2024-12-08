@@ -3,7 +3,7 @@
     "target": "ES2020",                 // Версия JavaScript, в которую будет компилироваться TypeScript
     "module": "commonjs",               // Модульная система для Node.js
     "rootDir": "./src",                 // Исходные файлы
-    "outDir": "./dist",                 // Скомпилированные файлы
+    "outDir": "./src/dist",                 // Скомпилированные файлы
     "strict": true,                     // Включает строгую типизацию
     "esModuleInterop": true,            // Поддержка модулей ES6
     "forceConsistentCasingInFileNames": true, // Проверка регистра файлов
