@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",  // Здесь указываем, куда будут компилироваться файлы
-    "rootDir": "./src",  // Исходные файлы находятся в папке src
+    "outDir": "./dist",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "moduleResolution": "node",
@@ -10,8 +10,8 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src/**/*"],  // Компилируются все файлы в src
-  "exclude": ["node_modules"]  // Исключаем папку node_modules
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }
 
 

@@ -1,10 +1,10 @@
-// models/Page.ts
 import mongoose, { Schema, Document, Model } from "mongoose";
 
 // Интерфейс документа
 export interface IPage extends Document {
   title: string;
   content: string;
+  ownerId: mongoose.Types.ObjectId; // Ссылка на пользователя
   createdAt: Date;
   updatedAt: Date | null;
   validatePage: () => void;
@@ -12,12 +12,13 @@ export interface IPage extends Document {
 
 // Интерфейс модели для фабричного метода
 interface PageModel extends Model<IPage> {
-  createPage: (title: string, content: string) => IPage;
+  createPage: (title: string, content: string, ownerId: mongoose.Types.ObjectId) => IPage;
 }
 
 const PageSchema = new Schema<IPage>({
   title: { type: String, required: true },
   content: { type: String, required: true },
+  ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Связь с пользователем
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: null },
 });
@@ -30,12 +31,10 @@ PageSchema.methods.validatePage = function () {
 };
 
 // Фабричный метод для создания страниц
-PageSchema.statics.createPage = function (title: string, content: string) {
-  const page = new this({ title, content });
+PageSchema.statics.createPage = function (title: string, content: string, ownerId: mongoose.Types.ObjectId) {
+  const page = new this({ title, content, ownerId });
   page.validatePage(); // Валидация
   return page;
 };
 
 export default mongoose.model<IPage, PageModel>("Page", PageSchema);
-
-

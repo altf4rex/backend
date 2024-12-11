@@ -1,79 +1,116 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import { AuthenticatedRequest } from "./authController";
 import Page from "../models/Page";
 
 export const PageController = {
-  // Получение всех страниц
-  async getAll(req: Request, res: Response) {
+  // Получить все страницы
+  async getAll(req: AuthenticatedRequest, res: Response) {
     try {
-      // const pages = await Page.find({}, { title: 1, _id: 1 });
       const pages = await Page.find();
-      res.json(pages); // Отправляем ответ и ничего не возвращаем
+      res.status(200).json(pages);
     } catch (error) {
-      res.status(500).json({ message: "An error occurred while fetching pages" });
+      res.status(500).json({ message: "Error fetching pages", error });
     }
   },
 
-  // Получение страницы по ID
-  async getById(req: Request, res: Response) {
+  // Получить страницу по ID
+  async getById(req: AuthenticatedRequest, res: Response) {
+    const { id } = req.params;
     try {
-      const page = await Page.findById(req.params.id);
+      const page = await Page.findById(id);
       if (!page) {
-        res.status(404).send("Page not found");
-        return; // Завершаем выполнение функции
-      }
-      res.json(page); // Отправляем ответ
-    } catch (error) {
-      res.status(500).json({ message: "An error occurred while fetching the page" });
-    }
-  },
-
-  // Создание новой страницы
-  async create(req: Request, res: Response) {
-    try {
-      const { title, content } = req.body;
-      const newPage = Page.createPage(title, content); // Используем фабрику
-      await newPage.save(); // Сохраняем в БД
-      res.status(201).json(newPage); // Ответ клиенту
-    } catch (error) {
-      res.status(400).json({ message: "Error creating page" });
-    }
-  },
-
-  // Обновление страницы по ID
-  async update(req: Request, res: Response) {
-    try {
-      const { id } = req.params;
-      const { title, content } = req.body;
-
-      const updatedPage = await Page.findByIdAndUpdate(
-        id,
-        { title, content, updatedAt: new Date() },
-        { new: true }
-      );
-
-      if (!updatedPage) {
-        res.status(404).send("Page not found");
+        res.status(404).json({ message: "Page not found" });
         return;
       }
-      res.json(updatedPage);
+      res.status(200).json(page);
     } catch (error) {
-      res.status(500).json({ message: "Error updating page" });
+      res.status(500).json({ message: "Error fetching page", error });
     }
   },
 
-  // Удаление страницы по ID
-  async delete(req: Request, res: Response) {
+  // Создать новую страницу
+  async create(req: AuthenticatedRequest, res: Response) {
+    const { title, content } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
     try {
-      const { id } = req.params;
-      const result = await Page.findByIdAndDelete(id);
-      if (!result) {
-        res.status(404).send("Page not found");
+      const newPage = new Page({
+        title,
+        content,
+        createdBy: userId,
+      });
+
+      const savedPage = await newPage.save();
+      res.status(201).json(savedPage);
+    } catch (error) {
+      res.status(500).json({ message: "Error creating page", error });
+    }
+  },
+
+  // Обновить страницу по ID
+  async update(req: AuthenticatedRequest, res: Response) {
+    const { id } = req.params;
+    const { title, content } = req.body;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    try {
+      const page = await Page.findById(id);
+      if (!page) {
+        res.status(404).json({ message: "Page not found" });
         return;
       }
-      res.status(204).send(); // Успешное удаление
+
+      if (page.ownerId.toString() !== userId) {
+        res.status(403).json({ message: "Forbidden" });
+        return;
+      }
+
+      page.title = title || page.title;
+      page.content = content || page.content;
+
+      const updatedPage = await page.save();
+      res.status(200).json(updatedPage);
     } catch (error) {
-      res.status(500).json({ message: "Error deleting page" });
+      res.status(500).json({ message: "Error updating page", error });
+    }
+  },
+
+  // Удалить страницу по ID
+  async delete(req: AuthenticatedRequest, res: Response) {
+    const { id } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    try {
+      const page = await Page.findById(id);
+      if (!page) {
+        res.status(404).json({ message: "Page not found" });
+        return;
+      }
+
+      if (page.ownerId.toString() !== userId) {
+        res.status(403).json({ message: "Forbidden" });
+        return;
+      }
+
+      await page.deleteOne();
+      res.status(200).json({ message: "Page deleted successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Error deleting page", error });
     }
   },
 };
-
