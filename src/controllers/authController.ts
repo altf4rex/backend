@@ -8,31 +8,6 @@ if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined");
 }
 
-// Расширенный интерфейс для авторизованных запросов
-export interface AuthenticatedRequest extends Request {
-  user?: { id: string };
-}
-
-// Middleware для проверки токена
-export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
-  const token = req.cookies?.authToken;
-
-  if (!token) {
-    console.log('No token found in cookies'); // Лог отсутствия токена
-    return res.status(401).json({ message: 'Access denied' });
-  }
-
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    console.log('Token verified successfully:', decoded); // Лог успешной проверки токена
-    req.user = decoded as { id: string };
-    next();
-  } catch (error) {
-    console.error('Invalid token:', error); // Лог некорректного токена
-    res.status(401).json({ message: 'Invalid token' });
-  }
-};
-
 // Логин пользователя
 export const login = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -54,7 +29,7 @@ export const login = async (req: Request, res: Response) => {
     res.cookie('authToken', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      sameSite: 'lax',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
     });
 

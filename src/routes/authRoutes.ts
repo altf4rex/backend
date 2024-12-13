@@ -2,6 +2,11 @@ import express, { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import { User } from '../models/User';
+import { authMiddleware } from '../middlewares/authMiddleware';
+import { AuthenticatedRequest } from "../middlewares/authMiddleware"
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const router = express.Router();
 router.use(cookieParser());
@@ -62,11 +67,13 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
+    res.cookie("token", token, {
+      httpOnly: true, // Защищает от JS-доступа
+      secure: process.env.NODE_ENV === "production", // Включить только для HTTPS
+      sameSite: "lax", // Блокирует кросс-сайтовые атаки
       maxAge: 60 * 60 * 1000, // 1 час
     });
+    
 
     console.log('User logged in successfully:', username); // Лог успешного входа
     res.status(200).json({ message: 'Login successful' });
@@ -75,5 +82,47 @@ router.post('/login', async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+router.get('/current-user', async (req: AuthenticatedRequest, res: Response) => {
+  try {
+    // Извлечение токена из кук
+    const token = req.cookies.token; // Убедитесь, что cookie-parser настроен
+
+    console.log(req.cookies.token)
+
+    console.log(req.cookies)
+
+    if (!token) {
+      console.log('No token in cookies');
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    // Проверка и декодирование токена
+    let decodedToken;
+    try {
+      decodedToken = jwt.verify(token, JWT_SECRET) as { id: string };
+    } catch (error) {
+      console.log('Invalid token:', error);
+      res.status(401).json({ message: 'Unauthorized' });
+    }
+
+    console.log('Decoded token:', decodedToken);
+
+    // Поиск пользователя по ID
+    const user = await User.findById(decodedToken?.id);
+    console.log('Found user:', user);
+
+    if (!user) {
+      res.status(401).json({ message: 'User not found' });
+    }
+
+    // Возврат данных пользователя
+    res.json({ user });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 export default router;

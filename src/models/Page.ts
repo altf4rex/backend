@@ -4,7 +4,8 @@ import mongoose, { Schema, Document, Model } from "mongoose";
 export interface IPage extends Document {
   title: string;
   content: string;
-  ownerId: mongoose.Types.ObjectId; // Ссылка на пользователя
+  ownerId: mongoose.Types.ObjectId;
+  public: boolean;
   createdAt: Date;
   updatedAt: Date | null;
   validatePage: () => void;
@@ -18,7 +19,8 @@ interface PageModel extends Model<IPage> {
 const PageSchema = new Schema<IPage>({
   title: { type: String, required: true },
   content: { type: String, required: true },
-  ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true }, // Связь с пользователем
+  ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  public: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: null },
 });

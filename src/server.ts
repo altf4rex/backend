@@ -10,7 +10,8 @@ import errorHandler from "./middlewares/errorHandler";
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 4000;
+const port = Number(process.env.PORT) || 4000; // Приводим порт к числовому типу
+const HOST = '127.0.0.1'; // Замените localhost на 127.0.0.1
 
 app.use(cors({
   origin: "http://127.0.0.1:3000",
@@ -31,8 +32,8 @@ app.use(errorHandler);
 (async () => {
   try {
     await Database.getInstance();
-    app.listen(port, () => {
-      console.log(`Server is running at http://localhost:${port}`);
+    app.listen(port, HOST, () => {
+      console.log(`Server running at http://${HOST}:${port}`);
     });
   } catch (err) {
     console.error("Failed to start server:", err);
