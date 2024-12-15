@@ -10,7 +10,7 @@ import errorHandler from "./middlewares/errorHandler";
 dotenv.config();
 
 const app = express();
-const port = Number(process.env.PORT) || 4000; // Приводим порт к числовому типу
+const port = Number(process.env.PORT) || 4000;
 const HOST = '127.0.0.1'; // Замените localhost на 127.0.0.1
 
 app.use(cors({

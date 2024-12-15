@@ -14,6 +14,13 @@ router.use(cookieParser());
 const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES = '1h';
 
+router.post('/logout', (req: Request, res: Response): void => {
+  res.clearCookie('connect.sid'); 
+  res.send('Вы успешно вышли из системы');
+});
+
+
+
 // Регистрация
 router.post('/register', async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
