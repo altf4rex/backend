@@ -10,13 +10,15 @@ import errorHandler from "./middlewares/errorHandler";
 dotenv.config();
 
 const app = express();
-const port = Number(process.env.PORT) || 4000;
-const HOST = '127.0.0.1'; // Замените localhost на 127.0.0.1
+const port = Number(process.env.PORT) || 4000; // Преобразование строки в число
+const HOST = '0.0.0.0';
 
+// CORS настройки
 app.use(cors({
-  origin: "http://127.0.0.1:3000",
-  credentials: true, // Включено для работы с cookies
+  origin: process.env.FRONTEND_URL || "http://127.0.0.1:3000", // Домен фронтенда
+  credentials: true, // Для работы с cookies
 }));
+
 app.use(express.json());
 app.use(cookieParser()); // Подключение cookie-parser
 
@@ -31,7 +33,7 @@ app.use(errorHandler);
 
 (async () => {
   try {
-    await Database.getInstance();
+    await Database.getInstance(); // Подключение к базе данных
     app.listen(port, HOST, () => {
       console.log(`Server running at http://${HOST}:${port}`);
     });
