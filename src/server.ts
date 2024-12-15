@@ -23,7 +23,7 @@ app.use(express.json());
 app.use(cookieParser()); // Подключение cookie-parser
 
 app.get("/", (req, res) => {
-  res.send("API is running. Use /api/pages to access endpoints.");
+  res.send("(￣▽￣)");
 });
 
 app.use("/api", pageRoutes);

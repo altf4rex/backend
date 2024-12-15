@@ -11,6 +11,9 @@ export interface AuthenticatedRequest extends Request {
 // Middleware для проверки токена
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const token = req.cookies?.token;
+  
+  console.log('Cookies:', req.cookies);
+  console.log('Token:', req.cookies?.token);
 
   if (!token) {
     res.status(401).json({ message: 'Unauthorized' });
