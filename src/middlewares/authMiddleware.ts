@@ -1,5 +1,7 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET!;
 
@@ -11,7 +13,7 @@ export interface AuthenticatedRequest extends Request {
 // Middleware для проверки токена
 export const authMiddleware = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   const token = req.cookies?.token;
-  
+
   console.log('Cookies:', req.cookies);
   console.log('Token:', req.cookies?.token);
 
