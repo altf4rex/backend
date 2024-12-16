@@ -14,10 +14,10 @@ const port = Number(process.env.PORT) || 4000; // Преобразование �
 const HOST = '0.0.0.0';
 
 // CORS настройки
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://127.0.0.1:3000", // Домен фронтенда
-  credentials: true, // Для работы с cookies
-}));
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || "http://127.0.0.1:3000", // Домен фронтенда
+//   credentials: true, // Для работы с cookies
+// }));
 
 app.use(express.json());
 app.use(cookieParser()); // Подключение cookie-parser
