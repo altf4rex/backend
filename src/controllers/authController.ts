@@ -45,13 +45,15 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 
-    res.cookie('token', token, {
+    res.cookie('token', 'abc123', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: "none", // Для кросс-доменных запросов
-      domain: '.onrender.com',
+      secure: true,
+      sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
     });
+    console.log('Set-Cookie Header:', res.getHeaders()['set-cookie']);
+    res.send('Cookie установлены');    
+    
 
     res.status(200).json({ message: 'Login successful' });
   } catch (error) {
