@@ -11,7 +11,7 @@ dotenv.config();
 
 const app = express();
 const port = Number(process.env.PORT) || 4000; // Преобразование строки в число
-const HOST = '0.0.0.0';
+const HOST = process.env.PORT ? '0.0.0.0' : "127.0.0.1"
 
 // CORS настройки
 app.use(cors({
