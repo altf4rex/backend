@@ -14,9 +14,9 @@ router.post('/login', login);
 router.post('/logout', logout);
 
 // Получение текущего пользователя (с проверкой токена)
-// router.get('/current-user', authMiddleware, getCurrentUser);
+router.get('/current-user', authMiddleware, getCurrentUser);
 
 // !
-router.get('/current-user', getCurrentUser);
+// router.get('/current-user', getCurrentUser);
 
 export default router;

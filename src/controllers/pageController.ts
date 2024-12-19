@@ -52,7 +52,6 @@ export const PageController = {
     }
   },
 
-  // Создать новую страницу
 // Создать новую страницу
 async create(req: AuthenticatedRequest, res: Response) {
   const { title, content } = req.body;
