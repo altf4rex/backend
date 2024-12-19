@@ -15,8 +15,8 @@ const HOST = process.env.PORT ? '0.0.0.0' : "127.0.0.1"
 
 // CORS настройки
 app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://127.0.0.1:3000", // Домен фронтенда
-  credentials: true, // Для работы с cookies
+  origin: 'https://note-app-nuxt-js.vercel.app', // Разрешаем запросы только с фронтенда
+  credentials: true, // Разрешаем куки
 }));
 
 app.use(express.json());

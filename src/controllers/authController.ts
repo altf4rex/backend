@@ -45,16 +45,18 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
     const token = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 
-    res.cookie('token', 'abc123', {
+    // Устанавливаем куки
+    res.cookie('token', token, {
       httpOnly: true,
       secure: true,
       sameSite: 'none',
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
     });
-    console.log('Set-Cookie Header:', res.getHeaders()['set-cookie']);
-    res.send('Cookie установлены');    
-    
 
+    // Логируем заголовок Set-Cookie
+    console.log('Set-Cookie Header:', res.getHeaders()['set-cookie']);
+
+    // Отправляем ответ клиенту
     res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
