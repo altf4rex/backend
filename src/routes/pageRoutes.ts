@@ -7,6 +7,11 @@ const router = Router();
 // Define routes for CRUD operations
 router.get("/showcase/pages" , PageController.getAllShowcase); // GET all pages
 router.get("/showcase/pages:id", PageController.getByIdShowcasetAll); // GET all pages
+
+//! 
+// public pages и просто в true выкрутить ?????? /showcase/pages === где будут выкручены страницы в public или там какой-то юзер 
+
+
 // Protected routes (auth required)
 router.get("/pages", authMiddleware, PageController.getAll); // GET all pages
 router.get("/pages/:id", authMiddleware, PageController.getById); // GET page by ID

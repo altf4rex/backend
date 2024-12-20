@@ -6,7 +6,7 @@ export const PageController = {
 
   async getAllShowcase(req: Request, res: Response) {
     try {
-      const pages = await Page.find({ ownerId: true });
+      const pages = await Page.find({ public: true });
       res.status(200).json(pages);
     } catch (error) {
       res.status(500).json({ message: "Error fetching pages", error });
@@ -16,7 +16,7 @@ export const PageController = {
   async getByIdShowcasetAll(req: Request, res: Response) {
     const { id } = req.params;
     try {
-      const page = await Page.findOne({ _id: id, ownerId: true });
+      const page = await Page.findOne({ _id: id, public: true });
       if (!page) {
         res.status(404).json({ message: "Page not found" });
         return;
@@ -29,6 +29,12 @@ export const PageController = {
 
   // Получить все страницы
   async getAll(req: AuthenticatedRequest, res: Response) {
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
     try {
       const pages = await Page.find();
       res.status(200).json(pages);
@@ -40,6 +46,13 @@ export const PageController = {
   // Получить страницу по ID
   async getById(req: AuthenticatedRequest, res: Response) {
     const { id } = req.params;
+    const userId = req.user?.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
     try {
       const page = await Page.findById(id);
       if (!page) {

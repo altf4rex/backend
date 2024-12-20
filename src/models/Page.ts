@@ -20,7 +20,7 @@ const PageSchema = new Schema<IPage>({
   title: { type: String, required: true },
   content: { type: String, required: true },
   ownerId: { type: Schema.Types.ObjectId, ref: "User", required: true },
-  public: { type: Boolean, default: false },
+  public: { type: Boolean, default: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: null },
 });

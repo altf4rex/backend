@@ -7,6 +7,7 @@ dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET!;
 const JWT_EXPIRES = '7d'; // Увеличен срок действия токена для удобства
 
+
 // Регистрация пользователя
 export const register = async (req: Request, res: Response): Promise<void> => {
   const { username, password } = req.body;
@@ -65,8 +66,8 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 // Выход из системы
 export const logout = (req: Request, res: Response): void => {
-  res.clearCookie('token');
-  res.status(200).json({ message: 'Logged out successfully' });
+  res.clearCookie('token', { path: '/' });
+  res.status(200).send('Logged out successfully');
 };
 
 // Получение данных текущего пользователя
