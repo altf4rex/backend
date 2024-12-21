@@ -66,7 +66,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 
 // Выход из системы
 export const logout = (req: Request, res: Response): void => {
-  res.clearCookie('token', { path: '/', domain: 'your-domain.com', httpOnly: true });
+  res.clearCookie('token', { path: '/', domain: 'note-app-nuxt-js.vercel.app', httpOnly: true });
   res.status(200).send('Logged out successfully');
 };
 
