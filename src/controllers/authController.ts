@@ -49,15 +49,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     // Устанавливаем куки
     res.cookie('token', token, {
       httpOnly: true,
-      secure: true,
+      secure: process.env.NODE_ENV === 'production', // Включаем secure только в продакшене
       sameSite: 'none',
+      path: '/', // Указываем явно
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 дней
     });
 
-    // Логируем заголовок Set-Cookie
-    console.log('Set-Cookie Header:', res.getHeaders()['set-cookie']);
-
-    // Отправляем ответ клиенту
     res.status(200).json({ message: 'Login successful' });
   } catch (error) {
     res.status(500).json({ message: 'Internal server error', error });
@@ -67,12 +64,12 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 // Выход из системы
 export const logout = (req: Request, res: Response): void => {
   res.clearCookie('token', {
-    domain: 'note-app-backend-46h9.onrender.com', // Укажите точный домен
+    path: '/', // Совпадает с установкой
     httpOnly: true,
-    secure: true, // Если ваш сервер работает через HTTPS
+    secure: process.env.NODE_ENV === 'production', // Включаем secure только в продакшене
+    sameSite: 'none', // Совпадает с установкой
   });
   res.status(200).send({ message: 'Logged out' });
-  
 };
 
 // Получение данных текущего пользователя
